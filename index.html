@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MSD BACKS AND SWEETS | Fresh Bakery – Mylampatty, Karur</title>
+  <meta name="description" content="MSD BACKS AND SWEETS – Premium bakery in Mylampatty, Karur. Fresh cakes, sweets, snacks, hot meals, juices and more. Order online with live delivery tracking.">
+  <meta name="keywords" content="bakery karur, sweets mylampatty, cakes kadavur, MSD backs, bakery near me">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Extra inline overrides */
+    .hidden { display: none !important; }
+    #admin-login.hidden { display: none !important; }
+    #checkout-form.hidden { display: none !important; }
+    #order-success.hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🍞</div>
+    <span class="nav-logo-text">MSD BACKS & SWEETS</span>
+  </div>
+
+  <ul class="nav-links" id="nav-links">
+    <li><a class="nav-link active" data-page="home" href="#" onclick="showPage('home');return false;">🏠 Home</a></li>
+    <li><a class="nav-link" data-page="products" href="#" onclick="showPage('products');return false;">🛍️ Menu</a></li>
+    <li><a class="nav-link" data-page="tracking" href="#" onclick="showPage('tracking');return false;">📍 Track Order</a></li>
+    <li><a class="nav-link" data-page="queries" href="#" onclick="showPage('queries');return false;">💬 Queries</a></li>
+    <li><a class="nav-link" data-page="admin" href="#" onclick="showPage('admin');return false;">⚙️ Admin</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="btn-cart" id="btn-cart" title="View Cart">
+      🛒
+      <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+    </button>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════════════════════════════
+     HOME SECTION
+════════════════════════════════════════════════════════ -->
+<section id="home-section" class="section active">
+  <!-- Hero -->
+  <div id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+
+    <!-- Floating decorative emojis -->
+    <div class="floating-emojis">
+      <span class="float-item" style="top:15%;left:8%;animation-delay:0s;font-size:2.5rem">🎂</span>
+      <span class="float-item" style="top:25%;right:12%;animation-delay:1s;font-size:2rem">🍩</span>
+      <span class="float-item" style="top:60%;left:5%;animation-delay:2s;font-size:1.8rem">☕</span>
+      <span class="float-item" style="top:70%;right:8%;animation-delay:0.5s;font-size:2.2rem">🍫</span>
+      <span class="float-item" style="top:40%;left:3%;animation-delay:1.5s;font-size:1.5rem">🥐</span>
+      <span class="float-item" style="top:80%;left:20%;animation-delay:3s;font-size:1.7rem">🧁</span>
+      <span class="float-item" style="top:10%;right:30%;animation-delay:2.5s;font-size:1.6rem">🍰</span>
+      <span class="float-item" style="top:85%;right:25%;animation-delay:4s;font-size:1.5rem">🥛</span>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>⭐</span> Karur's Favourite Bakery Since 2018
+      </div>
+      <h1 class="hero-title">MSD BACKS<br>AND SWEETS</h1>
+      <p class="hero-subtitle">
+        Freshly baked <span>cakes</span>, traditional <span>sweets</span>,<br>
+        hot <span>meals</span>, chilled <span>drinks</span> & more — delivered to your door!
+      </p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('products')">
+          🛍️ Explore Menu
+        </button>
+        <button class="btn-secondary" onclick="showPage('tracking')">
+          📍 Track Order
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">500+</div>
+          <div class="hero-stat-label">Happy Customers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">50+</div>
+          <div class="hero-stat-label">Menu Items</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">6 AM</div>
+          <div class="hero-stat-label">Opens Daily</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">10 KM</div>
+          <div class="hero-stat-label">Delivery Radius</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll Down</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
+  <!-- Features Strip -->
+  <div style="background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2rem 0;">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;text-align:center">
+        <div style="padding:1.5rem;border-radius:var(--radius);transition:var(--transition)" onmouseover="this.style.background='rgba(255,107,43,0.08)'" onmouseout="this.style.background='transparent'">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem">🚴</div>
+          <h4 style="font-weight:700;margin-bottom:0.25rem">Fast Delivery</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted)">Delivered in 20–40 min</p>
+        </div>
+        <div style="padding:1.5rem;border-radius:var(--radius);transition:var(--transition)" onmouseover="this.style.background='rgba(255,107,43,0.08)'" onmouseout="this.style.background='transparent'">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem">🧑‍🍳</div>
+          <h4 style="font-weight:700;margin-bottom:0.25rem">Freshly Made</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted)">Made fresh every morning</p>
+        </div>
+        <div style="padding:1.5rem;border-radius:var(--radius);transition:var(--transition)" onmouseover="this.style.background='rgba(255,107,43,0.08)'" onmouseout="this.style.background='transparent'">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem">📍</div>
+          <h4 style="font-weight:700;margin-bottom:0.25rem">Live Tracking</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted)">Track your order in real-time</p>
+        </div>
+        <div style="padding:1.5rem;border-radius:var(--radius);transition:var(--transition)" onmouseover="this.style.background='rgba(255,107,43,0.08)'" onmouseout="this.style.background='transparent'">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem">🎂</div>
+          <h4 style="font-weight:700;margin-bottom:0.25rem">Custom Cakes</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted)">Design your special cake!</p>
+        </div>
+        <div style="padding:1.5rem;border-radius:var(--radius);transition:var(--transition)" onmouseover="this.style.background='rgba(255,107,43,0.08)'" onmouseout="this.style.background='transparent'">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem">💳</div>
+          <h4 style="font-weight:700;margin-bottom:0.25rem">Easy Payment</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted)">Cash or UPI accepted</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popular Items Preview -->
+  <div style="padding:5rem 0">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">⭐ Popular Picks</div>
+        <h2 class="section-title">Our <span>Best Sellers</span></h2>
+        <p class="section-desc">The most loved items from our menu — tried and loved by hundreds!</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.25rem" id="popular-grid">
+        <!-- Populated by JS -->
+      </div>
+      <div style="text-align:center;margin-top:2.5rem">
+        <button class="btn-primary" onclick="showPage('products')">View Full Menu →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location Banner -->
+  <div style="background:var(--gradient);padding:3rem 0;margin:0">
+    <div class="container" style="text-align:center">
+      <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:0.5rem">📍 Visit Us Today!</h3>
+      <p style="opacity:0.9;margin-bottom:1rem">Palayam to Trichy Main Road, Mylampatty, Karur District, Kadavur (TK) - 621301</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="https://maps.google.com/?q=Mylampatty,Karur" target="_blank"
+           style="padding:0.7rem 1.5rem;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.5);border-radius:50px;font-weight:700;color:#fff;font-size:0.9rem;transition:var(--transition)"
+           onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+          🗺️ Open in Maps
+        </a>
+        <a href="tel:+919876543210"
+           style="padding:0.7rem 1.5rem;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.5);border-radius:50px;font-weight:700;color:#fff;font-size:0.9rem;transition:var(--transition)"
+           onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+          📞 Call Us Now
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div style="padding:5rem 0">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">💬 Reviews</div>
+        <h2 class="section-title">What Customers <span>Say</span></h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:var(--transition)" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="color:var(--accent);font-size:1.2rem;margin-bottom:0.75rem">⭐⭐⭐⭐⭐</div>
+          <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">"Best bakery in Karur! The black forest cake for my daughter's birthday was absolutely amazing. Fast delivery too!"</p>
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <div style="width:38px;height:38px;background:var(--gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem">👩</div>
+            <div><p style="font-weight:700;font-size:0.9rem">Priya Devi</p><p style="font-size:0.75rem;color:var(--text-dim)">Karur</p></div>
+          </div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:var(--transition)" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="color:var(--accent);font-size:1.2rem;margin-bottom:0.75rem">⭐⭐⭐⭐⭐</div>
+          <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">"The masala tea and bhadam milk are out of this world! I order every morning. Very punctual delivery."</p>
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <div style="width:38px;height:38px;background:var(--gradient2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem">👨</div>
+            <div><p style="font-weight:700;font-size:0.9rem">Murugan R</p><p style="font-size:0.75rem;color:var(--text-dim)">Mylampatty</p></div>
+          </div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:var(--transition)" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="color:var(--accent);font-size:1.2rem;margin-bottom:0.75rem">⭐⭐⭐⭐⭐</div>
+          <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">"Ordered chicken noodles at night — arrived hot and fresh! The live tracking feature is super cool, felt like Swiggy!"</p>
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <div style="width:38px;height:38px;background:var(--gradient3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🧑</div>
+            <div><p style="font-weight:700;font-size:0.9rem">Karthik S</p><p style="font-size:0.75rem;color:var(--text-dim)">Kadavur</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     PRODUCTS SECTION
+════════════════════════════════════════════════════════ -->
+<section id="products-section" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🛍️ Our Menu</div>
+      <h2 class="section-title">Fresh <span>Every Day</span></h2>
+      <p class="section-desc">From hot teas to custom cakes — we have it all. Tap a category to explore!</p>
+    </div>
+    <div id="products-container">
+      <!-- Populated by renderProducts() -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     TRACKING SECTION
+════════════════════════════════════════════════════════ -->
+<section id="tracking-section" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">📍 Live Tracking</div>
+      <h2 class="section-title">Track Your <span>Order</span></h2>
+      <p class="section-desc">Enter your Order ID or phone number to see real-time delivery location.</p>
+    </div>
+
+    <div class="tracking-search">
+      <input type="text" id="tracking-input" placeholder="Enter Order ID (e.g. MSD123456) or try DEMO" maxlength="20">
+      <button onclick="searchOrder()">🔍 Track</button>
+    </div>
+
+    <div class="tracking-grid">
+      <div id="delivery-map"></div>
+      <div id="tracking-info-panel">
+        <!-- Populated by displayOrderTracking() -->
+      </div>
+    </div>
+
+    <!-- Demo CTA -->
+    <div style="text-align:center;margin-top:1.5rem;padding:1.5rem;background:rgba(255,215,0,0.05);border:1px dashed rgba(255,215,0,0.3);border-radius:var(--radius)">
+      <p style="font-size:0.9rem;color:var(--text-muted)">💡 <strong style="color:var(--accent)">Demo Mode:</strong> Type <code style="background:rgba(255,107,43,0.15);padding:2px 8px;border-radius:4px;color:var(--primary)">DEMO</code> and click Track to see a live tracking simulation!</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     QUERIES SECTION
+════════════════════════════════════════════════════════ -->
+<section id="queries-section" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">💬 Help & Support</div>
+      <h2 class="section-title">Queries & <span>Complaints</span></h2>
+      <p class="section-desc">Have a question or concern? We're here to help! Reach out anytime.</p>
+    </div>
+
+    <div class="queries-grid">
+      <!-- Contact Form -->
+      <div class="contact-form-card">
+        <h3>📝 Send Us a Message</h3>
+
+        <!-- Query Type Buttons -->
+        <div class="query-type-btns">
+          <button class="query-type-btn active" data-type="query" onclick="setQueryType('query')">❓ Query</button>
+          <button class="query-type-btn" data-type="complaint" onclick="setQueryType('complaint')">⚠️ Complaint</button>
+          <button class="query-type-btn" data-type="feedback" onclick="setQueryType('feedback')">💡 Feedback</button>
+        </div>
+
+        <div class="form-group">
+          <label>Your Name</label>
+          <input id="q-name" type="text" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input id="q-phone" type="tel" placeholder="10-digit mobile number">
+        </div>
+        <div class="form-group">
+          <label>Your Message</label>
+          <textarea id="q-message" placeholder="Describe your query or complaint..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="submitQuery()">📤 Submit Message</button>
+
+        <!-- Quick Contact -->
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem">Or reach us directly:</p>
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+            <a href="tel:+919876543210" style="flex:1;min-width:120px;padding:0.6rem 1rem;background:rgba(67,160,71,0.15);border:1px solid rgba(67,160,71,0.3);border-radius:8px;color:#81C784;font-size:0.85rem;font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center;gap:0.4rem;transition:var(--transition)" onmouseover="this.style.background='rgba(67,160,71,0.3)'" onmouseout="this.style.background='rgba(67,160,71,0.15)'">📞 Call</a>
+            <a href="https://wa.me/919876543210?text=Hi MSD BACKS!" target="_blank" style="flex:1;min-width:120px;padding:0.6rem 1rem;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:8px;color:#25D366;font-size:0.85rem;font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center;gap:0.4rem;transition:var(--transition)" onmouseover="this.style.background='rgba(37,211,102,0.3)'" onmouseout="this.style.background='rgba(37,211,102,0.15)'">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="faq-card">
+        <h3>❓ Frequently Asked Questions</h3>
+        <div id="faq-list">
+          <!-- Populated by renderQueries() -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Shop Info + Map -->
+    <div class="shop-info-card" style="margin-top:2rem">
+      <div>
+        <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem">🏪 Shop Information</h3>
+        <div style="display:grid;gap:0.75rem">
+          <div class="shop-detail">
+            <div class="shop-detail-icon">📍</div>
+            <div class="shop-detail-text">
+              <label>Address</label>
+              <p>Palayam to Trichy Main Road, Mylampatty, Karur (dt), Kadavur (tk) - 621301</p>
+            </div>
+          </div>
+          <div class="shop-detail">
+            <div class="shop-detail-icon">📞</div>
+            <div class="shop-detail-text">
+              <label>Phone</label>
+              <p><a href="tel:+919876543210" style="color:var(--primary)">+91 98765 43210</a></p>
+            </div>
+          </div>
+          <div class="shop-detail">
+            <div class="shop-detail-icon">⏰</div>
+            <div class="shop-detail-text">
+              <label>Opening Hours</label>
+              <p>6:00 AM – 11:00 PM (Daily)</p>
+            </div>
+          </div>
+          <div class="shop-detail">
+            <div class="shop-detail-icon">🚴</div>
+            <div class="shop-detail-text">
+              <label>Delivery Area</label>
+              <p>Within 10 km radius • ₹30 delivery fee</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div id="contact-map"></div>
+        <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:0.5rem">📍 Mylampatty, Karur</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ADMIN SECTION
+════════════════════════════════════════════════════════ -->
+<section id="admin-section" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">👑 Administration</div>
+      <h2 class="section-title">Admin <span>Panel</span></h2>
+    </div>
+
+    <!-- Login Card -->
+    <div id="admin-login">
+      <div class="admin-login-card">
+        <div class="admin-login-icon">👑</div>
+        <h3>Admin Access</h3>
+        <p>Enter the admin password to access the management panel</p>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="admin-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+        </div>
+        <button class="btn-primary" style="width:100%;justify-content:center" onclick="adminLogin()">🔑 Login to Admin</button>
+        <p style="margin-top:1rem;font-size:0.75rem;color:var(--text-dim)">Default: admin123</p>
+      </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="admin-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <div style="width:44px;height:44px;background:var(--gradient3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:1px solid var(--secondary)">👑</div>
+          <div>
+            <h3 style="font-size:1rem;font-weight:700">Welcome, Admin!</h3>
+            <p style="font-size:0.75rem;color:var(--text-muted)">MSD BACKS AND SWEETS Management</p>
+          </div>
+        </div>
+        <button onclick="adminLogout()" style="padding:0.5rem 1rem;background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.3);border-radius:8px;color:#EF9A9A;font-size:0.85rem;font-weight:600;cursor:pointer">🚪 Logout</button>
+      </div>
+
+      <!-- Admin Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab" data-tab="dashboard" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
+        <button class="admin-tab" data-tab="orders" onclick="switchAdminTab('orders')">📦 Orders</button>
+        <button class="admin-tab" data-tab="workers" onclick="switchAdminTab('workers')">👷 Workers</button>
+        <button class="admin-tab" data-tab="delivery" onclick="switchAdminTab('delivery')">🚴 Delivery</button>
+        <button class="admin-tab" data-tab="salary" onclick="switchAdminTab('salary')">💰 Salary</button>
+        <button class="admin-tab" data-tab="queries" onclick="switchAdminTab('queries')">💬 Queries</button>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div class="admin-content" id="admin-dashboard">
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <span class="stat-icon">📦</span>
+            <div class="stat-num" id="stat-orders">0</div>
+            <div class="stat-label">Today's Orders</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <div class="stat-num" id="stat-revenue">₹0</div>
+            <div class="stat-label">Today's Revenue</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏳</span>
+            <div class="stat-num" id="stat-pending">0</div>
+            <div class="stat-label">Pending Orders</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👷</span>
+            <div class="stat-num" id="stat-workers">0</div>
+            <div class="stat-label">Active Workers</div>
+          </div>
+        </div>
+        <div class="admin-header">
+          <h3>📋 Recent Orders</h3>
+          <button class="btn-add" onclick="switchAdminTab('orders')">View All Orders →</button>
+        </div>
+        <div id="recent-orders-table"></div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div class="admin-content" id="admin-orders">
+        <div class="admin-header">
+          <h3>📦 All Orders</h3>
+          <div style="display:flex;gap:0.75rem;align-items:center">
+            <select id="order-status-filter" onchange="renderAdminOrders()"
+              style="background:var(--bg-card2);border:1px solid var(--border);color:var(--text);padding:0.5rem 0.75rem;border-radius:8px;font-size:0.85rem">
+              <option value="all">All Status</option>
+              <option value="placed">Placed</option>
+              <option value="preparing">Preparing</option>
+              <option value="on_way">On the Way</option>
+              <option value="delivered">Delivered</option>
+            </select>
+          </div>
+        </div>
+        <div id="orders-table-area"></div>
+      </div>
+
+      <!-- Workers Tab -->
+      <div class="admin-content" id="admin-workers">
+        <div class="admin-header">
+          <h3>👷 Worker Management</h3>
+          <button class="btn-add" onclick="showAddWorkerForm()">+ Add Worker</button>
+        </div>
+        <div id="workers-table-area"></div>
+      </div>
+
+      <!-- Delivery Tab -->
+      <div class="admin-content" id="admin-delivery">
+        <div class="admin-header">
+          <h3>🚴 Delivery Persons</h3>
+          <button class="btn-add" onclick="showAddDeliveryForm()">+ Add Delivery Person</button>
+        </div>
+        <div id="delivery-table-area"></div>
+      </div>
+
+      <!-- Salary Tab -->
+      <div class="admin-content" id="admin-salary">
+        <div class="admin-header">
+          <h3>💰 Salary Calculation</h3>
+          <button class="btn-add" onclick="renderSalary()">🔄 Recalculate</button>
+        </div>
+        <div id="salary-content"></div>
+      </div>
+
+      <!-- Queries Tab -->
+      <div class="admin-content" id="admin-queries">
+        <div class="admin-header">
+          <h3>💬 Customer Queries & Complaints</h3>
+        </div>
+        <div id="queries-table-area"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:1rem">
+          <div class="nav-logo-icon">🍞</div>
+          <span class="nav-logo-text">MSD BACKS & SWEETS</span>
+        </div>
+        <p>Freshly baked with love every single day. Your neighbourhood bakery in Mylampatty, Karur since 2018.</p>
+        <div class="social-links" style="margin-top:1rem">
+          <a href="https://wa.me/919876543210" target="_blank" class="social-link" title="WhatsApp">💬</a>
+          <a href="tel:+919876543210" class="social-link" title="Call">📞</a>
+          <a href="https://maps.google.com/?q=Mylampatty,Karur" target="_blank" class="social-link" title="Location">📍</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('products');switchCategory('milk')">☕ Milk Products</a></li>
+          <li><a href="#" onclick="showPage('products');switchCategory('drinks')">🥤 Drinks</a></li>
+          <li><a href="#" onclick="showPage('products');switchCategory('snacks')">🍿 Snacks</a></li>
+          <li><a href="#" onclick="showPage('products');switchCategory('cakes')">🎂 Cakes</a></li>
+          <li><a href="#" onclick="showPage('products');switchCategory('sweets')">🍬 Sweets</a></li>
+          <li><a href="#" onclick="showPage('products');switchCategory('meals')">🍽️ Meals</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('home')">🏠 Home</a></li>
+          <li><a href="#" onclick="showPage('tracking')">📍 Track Order</a></li>
+          <li><a href="#" onclick="showPage('queries')">💬 Contact Us</a></li>
+          <li><a href="#" onclick="showPage('admin')">⚙️ Admin</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:+919876543210">📞 +91 98765 43210</a></li>
+          <li><a href="https://wa.me/919876543210" target="_blank">💬 WhatsApp Us</a></li>
+          <li style="color:var(--text-muted);font-size:0.85rem;line-height:1.6;padding:0.25rem 0">📍 Mylampatty,<br>Karur - 621301</li>
+          <li style="color:var(--text-muted);font-size:0.85rem;padding:0.25rem 0">⏰ 6 AM – 11 PM</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 MSD BACKS AND SWEETS. Made with ❤️ in Karur, Tamil Nadu.</p>
+      <p style="font-size:0.75rem;color:var(--text-dim)">Meals available after 6:00 PM daily</p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ════════════════════════════════════════════════════════
+     CART SIDEBAR
+════════════════════════════════════════════════════════ -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="btn-close-cart" id="btn-close-cart">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items-list"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal">
+      <span>Subtotal</span>
+      <span id="cart-subtotal-val">₹0</span>
+    </div>
+    <div class="cart-subtotal">
+      <span>Delivery</span>
+      <span id="cart-delivery-val">₹0</span>
+    </div>
+    <div class="cart-total">
+      <span>Total</span>
+      <span id="cart-total-val">₹0</span>
+    </div>
+    <button class="btn-checkout" onclick="openCheckout()">🚀 Proceed to Checkout</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     CHECKOUT MODAL
+════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCheckout()">✕</button>
+
+    <!-- Checkout Form -->
+    <div id="checkout-form">
+      <div class="modal-title">🛒 Complete Your Order</div>
+
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input id="order-name" type="text" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input id="order-phone" type="tel" placeholder="10-digit mobile number" maxlength="10">
+      </div>
+      <div class="form-group">
+        <label>Delivery Address *</label>
+        <textarea id="order-address" placeholder="Full delivery address with landmark..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Payment Method</label>
+        <div class="payment-options">
+          <label class="payment-option selected" data-payment="cod" onclick="selectPayment('cod')">
+            <span class="payment-option-icon">💵</span>
+            <span class="payment-option-name">Cash on Delivery</span>
+          </label>
+          <label class="payment-option" data-payment="upi" onclick="selectPayment('upi')">
+            <span class="payment-option-icon">📱</span>
+            <span class="payment-option-name">UPI Payment</span>
+          </label>
+        </div>
+      </div>
+      <!-- UPI QR (shown conditionally) -->
+      <div id="upi-section" style="display:none;text-align:center;padding:1rem;background:rgba(255,107,43,0.05);border:1px dashed rgba(255,107,43,0.3);border-radius:8px;margin-bottom:1rem">
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem">Scan UPI QR or pay to:</p>
+        <p style="font-size:1.2rem;font-weight:700;color:var(--primary)">msdbacks@upi</p>
+        <p style="font-size:0.8rem;color:var(--text-dim);margin-top:0.25rem">Enter your UTR number after payment</p>
+        <input placeholder="UTR / Transaction ID" style="width:100%;margin-top:0.75rem;padding:0.5rem;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem">
+      </div>
+      <button class="btn-checkout" onclick="placeOrder()">✅ Place Order</button>
+    </div>
+
+    <!-- Order Success -->
+    <div id="order-success" class="order-success hidden">
+      <div class="success-icon">✅</div>
+      <h3 style="font-size:1.4rem;font-weight:800;margin-bottom:0.5rem">Order Placed!</h3>
+      <p style="color:var(--text-muted)">Your order has been received successfully!</p>
+      <div class="order-id-display" id="order-id-display">MSD000000</div>
+      <div class="estimated-time">
+        ⏱️ Estimated delivery: <strong id="est-time-display" style="color:var(--primary);margin:0 0.25rem">30</strong> minutes
+      </div>
+      <div style="padding:0.75rem;background:var(--bg-card2);border-radius:8px;margin:0.75rem 0;font-size:0.85rem">
+        <p style="color:var(--text-muted)">Your delivery person:</p>
+        <p style="font-weight:700;color:var(--accent)" id="success-dp-name">Rajan Kumar</p>
+        <p style="color:var(--primary)" id="success-dp-phone">9876501234</p>
+      </div>
+      <div style="display:flex;gap:0.75rem;margin-top:1rem">
+        <button class="btn-primary" style="flex:1;justify-content:center" onclick="trackOrderFromSuccess()">📍 Track Order</button>
+        <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeCheckout()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     TOAST CONTAINER
+════════════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════════ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script src="tracking.js"></script>
+<script src="admin.js"></script>
+
+<script>
+// ── Three.js Hero Animation ──────────────────────────────
+(function initHero3D() {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas || !window.THREE) return;
+
+  const scene    = new THREE.Scene();
+  const camera   = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  camera.position.z = 5;
+
+  // Particle system
+  const particleCount = 200;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+
+  const colorPalette = [
+    new THREE.Color(0xFF6B2B), // orange
+    new THREE.Color(0xFFD700), // gold
+    new THREE.Color(0x8B1A4A), // crimson
+    new THREE.Color(0xFF4081), // pink
+  ];
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    const c = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+    colors[i * 3]     = c.r;
+    colors[i * 3 + 1] = c.g;
+    colors[i * 3 + 2] = c.b;
+    sizes[i] = Math.random() * 4 + 1;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  const material = new THREE.PointsMaterial({
+    size: 0.08,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.7,
+    sizeAttenuation: true,
+  });
+
+  const particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+
+  // Floating geometric shapes
+  function createShape(type, color, x, y, z, size) {
+    let geo;
+    if (type === 'torus')  geo = new THREE.TorusGeometry(size, size * 0.3, 8, 16);
+    else if (type === 'oct') geo = new THREE.OctahedronGeometry(size);
+    else                      geo = new THREE.IcosahedronGeometry(size);
+
+    const mat = new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.2 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, y, z);
+    mesh.userData = { rotX: Math.random() * 0.01, rotY: Math.random() * 0.01, floatSpeed: Math.random() * 0.01 + 0.005, initY: y };
+    scene.add(mesh);
+    return mesh;
+  }
+
+  const shapes = [
+    createShape('torus',  0xFF6B2B,  3,  1.5, -2, 0.8),
+    createShape('oct',    0xFFD700, -3,  -1,  -1, 0.5),
+    createShape('ico',    0x8B1A4A,  4, -2,   -3, 0.6),
+    createShape('torus',  0xFF4081, -4,  2,   -2, 0.5),
+    createShape('oct',    0xFF6B2B,  0, -3,   -4, 0.7),
+  ];
+
+  let mouse = { x: 0, y: 0 };
+  window.addEventListener('mousemove', e => {
+    mouse.x = (e.clientX / window.innerWidth - 0.5) * 0.3;
+    mouse.y = -(e.clientY / window.innerHeight - 0.5) * 0.3;
+  });
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.01;
+
+    // Rotate particles
+    particles.rotation.y += 0.001;
+    particles.rotation.x += 0.0005;
+
+    // Animate shapes
+    shapes.forEach(sh => {
+      sh.rotation.x += sh.userData.rotX;
+      sh.rotation.y += sh.userData.rotY;
+      sh.position.y = sh.userData.initY + Math.sin(t * sh.userData.floatSpeed * 100) * 0.3;
+    });
+
+    // Camera follows mouse
+    camera.position.x += (mouse.x - camera.position.x) * 0.05;
+    camera.position.y += (mouse.y - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+// ── Render Hero Popular Items ─────────────────────────────
+function renderPopularGrid() {
+  const grid = document.getElementById('popular-grid');
+  if (!grid) return;
+  const popularItems = [];
+  Object.values(PRODUCTS).forEach(cat => {
+    const items = cat.items || [];
+    items.filter(i => i.popular).forEach(i => {
+      if (popularItems.length < 8) popularItems.push({ ...i, catId: cat.id });
+    });
+    if (cat.subCategories) {
+      Object.values(cat.subCategories).forEach(sub => {
+        sub.items.filter(i => i.popular).forEach(i => {
+          if (popularItems.length < 8) popularItems.push({ ...i, catId: cat.id });
+        });
+      });
+    }
+  });
+
+  grid.innerHTML = popularItems.map((item, i) => `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;
+                transition:var(--transition);cursor:pointer;animation:fadeInUp 0.5s ease ${i*0.1}s both;text-align:center"
+         onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='var(--primary)';this.style.boxShadow='var(--shadow)'"
+         onmouseout="this.style.transform='';this.style.borderColor='var(--border)';this.style.boxShadow=''"
+         onclick="showPage('products');setTimeout(()=>switchCategory('${item.catId}'),200)">
+      <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem">${item.emoji}</span>
+      <p style="font-weight:700;font-size:0.95rem;margin-bottom:0.25rem">${item.name}</p>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem">${item.desc}</p>
+      <p style="color:var(--accent);font-weight:800">₹${item.price}</p>
+    </div>`).join('');
+}
+
+// Run after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  renderPopularGrid();
+
+  // UPI toggle
+  document.querySelectorAll('.payment-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const upiSection = document.getElementById('upi-section');
+      if (upiSection) upiSection.style.display = opt.dataset.payment === 'upi' ? 'block' : 'none';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
