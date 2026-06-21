@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { statuses, statusLabels } from './Navbar';
+import API_BASE_URL from '../config';
 
 function money(v) { return '\u20B9' + Number(v || 0); }
 
@@ -25,7 +26,7 @@ export default function Admin({ notify }) {
   const authHeaders = { Authorization: `Bearer ${token}` };
 
   async function doLogin() {
-    const res = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(login) });
+    const res = await fetch(`${API_BASE_URL}/api/admin/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(login) });
     const json = await res.json();
     if (!res.ok) return notify(json.message || 'Login failed', 'error');
     localStorage.setItem('msd_admin_token', json.token);
@@ -34,19 +35,19 @@ export default function Admin({ notify }) {
   }
 
   async function loadOrders() {
-    const res = await fetch('/api/orders', { headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/orders`, { headers: authHeaders });
     const json = await res.json();
     if (res.ok) setOrders(json.data);
   }
 
   async function loadWorkers() {
-    const res = await fetch('/api/workers', { headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers`, { headers: authHeaders });
     const json = await res.json();
     if (res.ok) setWorkers(json.data);
   }
 
   async function loadQueries() {
-    const res = await fetch('/api/queries', { headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/queries`, { headers: authHeaders });
     const json = await res.json();
     if (res.ok) setQueries(json.data);
   }
@@ -56,14 +57,14 @@ export default function Admin({ notify }) {
   }, [token]);
 
   async function updateStatus(id, status) {
-    const res = await fetch(`/api/orders/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ status }) });
+    const res = await fetch(`${API_BASE_URL}/api/orders/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ status }) });
     const json = await res.json();
     if (res.ok) { setOrders(prev => prev.map(o => o.id === id ? json.data : o)); notify(`Order ${id} updated`, 'success'); }
   }
 
   async function addWorker() {
     if (!newWorker.name || !newWorker.phone) return notify('Name and phone required', 'warning');
-    const res = await fetch('/api/workers', { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify(newWorker) });
+    const res = await fetch(`${API_BASE_URL}/api/workers`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify(newWorker) });
     const json = await res.json();
     if (!res.ok) return notify(json.message || 'Error', 'error');
     setWorkers(prev => [...prev, json.data]);
@@ -73,25 +74,25 @@ export default function Admin({ notify }) {
   }
 
   async function checkIn(workerId) {
-    const res = await fetch(`/api/workers/${workerId}/checkin`, { method: 'POST', headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers/${workerId}/checkin`, { method: 'POST', headers: authHeaders });
     const json = await res.json();
     if (res.ok) notify('Checked in', 'success');
   }
 
   async function checkOut(workerId) {
-    const res = await fetch(`/api/workers/${workerId}/checkout`, { method: 'POST', headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers/${workerId}/checkout`, { method: 'POST', headers: authHeaders });
     const json = await res.json();
     if (res.ok) notify('Checked out', 'success');
   }
 
   async function loadAttendance(workerId) {
-    const res = await fetch(`/api/workers/${workerId}/attendance?month=${salaryMonth}&year=${salaryYear}`, { headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers/${workerId}/attendance?month=${salaryMonth}&year=${salaryYear}`, { headers: authHeaders });
     const json = await res.json();
     if (res.ok) setAttendanceRecords(json.data);
   }
 
   async function calculateSalary(workerId) {
-    const res = await fetch('/api/workers/salary/calculate', { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ workerId, month: salaryMonth, year: salaryYear }) });
+    const res = await fetch(`${API_BASE_URL}/api/workers/salary/calculate`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ workerId, month: salaryMonth, year: salaryYear }) });
     const json = await res.json();
     if (!res.ok) return notify(json.message || 'Error', 'error');
     setSalaryRecords(prev => [...prev.filter(s => s.workerId !== workerId), json.data]);
@@ -99,25 +100,25 @@ export default function Admin({ notify }) {
   }
 
   async function loadSalary(workerId) {
-    const res = await fetch(`/api/workers/salary/${workerId}`, { headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers/salary/${workerId}`, { headers: authHeaders });
     const json = await res.json();
     if (res.ok) setSalaryRecords(json.data);
   }
 
   async function paySalary(salaryId) {
-    const res = await fetch(`/api/workers/salary/${salaryId}/pay`, { method: 'POST', headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers/salary/${salaryId}/pay`, { method: 'POST', headers: authHeaders });
     const json = await res.json();
     if (res.ok) { setSalaryRecords(prev => prev.map(s => s._id === salaryId ? json.data : s)); notify('Salary marked as paid', 'success'); }
   }
 
   async function updateQueryStatus(id, status) {
-    const res = await fetch(`/api/queries/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ status }) });
+    const res = await fetch(`${API_BASE_URL}/api/queries/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeaders }, body: JSON.stringify({ status }) });
     const json = await res.json();
     if (res.ok) setQueries(prev => prev.map(q => q._id === id ? json.data : q));
   }
 
   async function deactivateWorker(id) {
-    const res = await fetch(`/api/workers/${id}`, { method: 'DELETE', headers: authHeaders });
+    const res = await fetch(`${API_BASE_URL}/api/workers/${id}`, { method: 'DELETE', headers: authHeaders });
     const json = await res.json();
     if (res.ok) { setWorkers(prev => prev.map(w => w._id === id ? { ...w, isActive: false } : w)); notify('Worker deactivated', 'success'); }
   }

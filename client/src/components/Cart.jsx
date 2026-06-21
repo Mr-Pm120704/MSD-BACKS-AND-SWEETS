@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PRODUCTS, SHOP_INFO } from '../productData';
+import API_BASE_URL from '../config';
 
 function money(v) { return '\u20B9' + Number(v || 0); }
 
@@ -27,7 +28,7 @@ export default function Cart({ cart, setCart, open, setOpen, setOrderSuccess, no
         status: 'placed',
         estimatedMins: Math.floor(Math.random() * 15) + 20
       };
-      const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const res = await fetch(`${API_BASE_URL}/api/orders`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const json = await res.json();
       setPlacing(false);
       if (!res.ok) return notify(json.message || 'Order failed', 'error');

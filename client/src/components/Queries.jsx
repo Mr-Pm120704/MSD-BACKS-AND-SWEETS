@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SHOP_INFO } from '../productData';
+import API_BASE_URL from '../config';
 
 export default function Queries({ notify }) {
   const [queryType, setQueryType] = useState('query');
@@ -32,7 +33,7 @@ export default function Queries({ notify }) {
   async function submitQuery() {
     if (!form.name || !form.phone || !form.message) return notify('Please fill all fields', 'warning');
     try {
-      const res = await fetch('/api/queries', {
+      const res = await fetch(`${API_BASE_URL}/api/queries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, type: queryType })

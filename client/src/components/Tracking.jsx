@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SHOP_INFO } from '../productData';
 import { statuses, statusLabels } from './Navbar';
+import API_BASE_URL from '../config';
 
 function money(v) { return '\u20B9' + Number(v || 0); }
 
@@ -19,7 +20,7 @@ export default function Tracking({ notify }) {
     if (!term) return notify('Enter order id or phone', 'warning');
     setLoading(true);
     try {
-      const res = await fetch(`/api/orders/track/${encodeURIComponent(term)}`);
+      const res = await fetch(`${API_BASE_URL}/api/orders/track/${encodeURIComponent(term)}`);
       const json = await res.json();
       setLoading(false);
       if (!res.ok) return notify(json.message || 'Order not found', 'error');
