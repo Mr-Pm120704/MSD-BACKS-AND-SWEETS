@@ -3,27 +3,23 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
+const http = require('http');
+const { Server } = require('socket.io');
 
-// Load env vars
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: '*' } });
+
 const legacyRoot = path.join(__dirname, '../');
 const clientDist = path.join(__dirname, '../client/dist');
-const legacyAssets = new Set([
-  'index.html',
-  'style.css',
-  'data.js',
-  'app.js',
-  'tracking.js',
-  'admin.js'
-]);
+const legacyAssets = new Set(['index.html', 'style.css', 'data.js', 'app.js', 'tracking.js', 'admin.js']);
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Preserve the original static website unchanged under /legacy/.
+// Legacy site
 app.get('/legacy', (req, res) => res.redirect('/legacy/'));
 app.get('/legacy/', (req, res) => res.sendFile(path.join(legacyRoot, 'index.html')));
 app.get('/legacy/:asset', (req, res, next) => {
@@ -34,33 +30,59 @@ app.get('/legacy/:asset', (req, res, next) => {
 // Routes
 const { router: authRoutes } = require('./routes/auth');
 const orderRoutes = require('./routes/orders');
-// We will mock workers and queries in the DB for now, but keeping routes simple
+const workerRoutes = require('./routes/workers');
+const queryRoutes = require('./routes/queries');
 
 app.use('/api/admin', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/workers', workerRoutes);
+app.use('/api/queries', queryRoutes);
 
-// Serve the React client build in production.
-app.use(express.static(clientDist));
+// Socket.IO for real-time delivery tracking
+const deliveryLocations = {};
 
-// Fallback to React index.html for SPA routing.
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) return next();
-  res.sendFile(path.join(clientDist, 'index.html'), err => {
-    if (err) {
-      res.status(200).sendFile(path.join(legacyRoot, 'index.html'));
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+
+  socket.on('subscribe-tracking', (orderId) => {
+    socket.join(`order-${orderId}`);
+  });
+
+  socket.on('delivery-location-update', (data) => {
+    const { deliveryPersonId, lat, lng, orderId } = data;
+    deliveryLocations[deliveryPersonId] = { lat, lng, updatedAt: Date.now() };
+    if (orderId) {
+      io.to(`order-${orderId}`).emit('location-update', {
+        deliveryPersonId, lat, lng, timestamp: Date.now()
+      });
     }
+    io.emit('delivery-location', { deliveryPersonId, lat, lng });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
   });
 });
 
-const PORT = process.env.PORT || 5000;
+// Serve React build
+app.use(express.static(clientDist));
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) return next();
+  res.sendFile(path.join(clientDist, 'index.html'), err => {
+    if (err) res.status(200).sendFile(path.join(legacyRoot, 'index.html'));
+  });
+});
 
-// Connect to MongoDB
+const PORT = process.env.PORT || 3080;
+
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/msdbacks')
 .then(() => {
   console.log('MongoDB Connected');
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
 .catch(err => {
   console.error('MongoDB connection error:', err);
   process.exit(1);
 });
+
+module.exports = { app, io };

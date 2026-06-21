@@ -7,22 +7,20 @@ const orderSchema = new mongoose.Schema({
   addr: { type: String, required: true },
   payment: { type: String, enum: ['cod', 'upi'], default: 'cod' },
   items: [
-    {
-      id: String,
-      name: String,
-      price: Number,
-      qty: Number,
-      emoji: String,
-      catId: String
-    }
+    { id: String, name: String, price: Number, qty: Number, emoji: String, catId: String }
   ],
   subtotal: { type: Number, required: true },
   delivery: { type: Number, default: 30 },
   total: { type: Number, required: true },
   status: { type: String, enum: ['placed', 'preparing', 'picked', 'on_way', 'delivered'], default: 'placed' },
-  deliveryPersonId: { type: String },
+  deliveryPersonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Worker' },
+  deliveryPersonName: { type: String },
+  deliveryPersonPhone: { type: String },
+  deliveryPersonVehicle: { type: String },
+  deliveryPersonPhoto: { type: String },
+  estimatedMins: { type: Number, default: 30 },
   placedAt: { type: Date, default: Date.now },
-  estimatedMins: { type: Number, default: 30 }
+  deliveredAt: { type: Date }
 });
 
 module.exports = mongoose.model('Order', orderSchema);
